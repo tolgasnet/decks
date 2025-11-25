@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Native Engineering: The Playbook</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --primary: #3b82f6;
+            --accent: #6366f1;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Main Container */
+        .slide-container {
+            width: 950px;
+            height: 550px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            display: flex;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Left Side: Narrative */
+        .narrative-section {
+            flex: 0 0 38%;
+            padding: 3rem;
+            padding-bottom: 7rem; /* Increased padding to create gap for arrows */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid var(--border);
+            z-index: 2;
+            background: var(--bg-card);
+            position: relative;
+        }
+
+        .stage-tag {
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .slide-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .slide-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        /* Right Side: Visuals */
+        .visual-section {
+            flex: 1;
+            position: relative;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Visual Elements (Tool Blocks) */
+        .tool-block {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            opacity: 0; /* Hidden by default for animation */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+            z-index: 5;
+        }
+
+        .tool-block.primary {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.4);
+            color: var(--primary);
+            z-index: 6;
+        }
+        
+        .tool-block.danger {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #f87171;
+        }
+
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: var(--border);
+            transform-origin: left center;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* Navigation Controls */
+        .nav-controls {
+            position: absolute;
+            bottom: 2rem; /* Kept low */
+            left: 3rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 20; /* High z-index */
+        }
+
+        .nav-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .nav-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+            z-index: 100; /* Ensure it is on TOP of everything, including the narrative panel */
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="slide-container">
+        <!-- Narrative Side -->
+        <div class="narrative-section">
+            <div id="slide-content">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="nav-controls">
+                <button class="nav-btn" onclick="prevSlide()" title="Previous">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button class="nav-btn" id="next-btn" onclick="nextSlide()" title="Next">
+                    <svg id="next-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Visual Side -->
+        <div class="visual-section" id="visual-canvas">
+            <!-- Dynamic elements injected here -->
+        </div>
+
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <script>
+        const slides = [
+            {
+                id: 'plan',
+                tag: 'Phase 1',
+                title: 'Plan',
+                text: "In an AI-native team, planning is a continuous loop. Agents scan initial specs in Jira, check the codebase for dependencies, and then loop back to update the original ticket with technical realities. This triangle of context ensures plans are grounded in code before work begins.",
+                visuals: [
+                    // Triangle Layout: Agent (Top), Jira (Bottom Left), Codebase (Bottom Right)
+                    { type: 'box', text: 'Jira Spec', x: -160, y: 60 },
+                    { type: 'box', text: 'AI Agent', x: 0, y: -60, primary: true },
+                    { type: 'box', text: 'Codebase', x: 160, y: 60 },
+                    
+                    { type: 'line', from: 0, to: 1 }, // Jira -> Agent
+                    { type: 'line', from: 1, to: 2 }, // Agent -> Codebase
+                    { type: 'line', from: 2, to: 0 }  // Codebase -> Jira (Feedback loop)
+                ]
+            },
+            {
+                id: 'design',
+                tag: 'Phase 2',
+                title: 'Design',
+                text: "Design handoff is accelerated by automating the translation of visuals to code. The Agent reads design tokens directly from Figma and generates the initial scaffolding. This transforms a static mockup into a working React prototype in minutes.",
+                visuals: [
+                    { type: 'box', text: 'Figma', x: -150, y: 0 },
+                    { type: 'box', text: 'AI Agent', x: 0, y: 0, primary: true },
+                    { type: 'box', text: 'React Code', x: 150, y: 0 },
+                    { type: 'line', from: 0, to: 1 },
+                    { type: 'line', from: 1, to: 2 }
+                ]
+            },
+            {
+                id: 'build',
+                tag: 'Phase 3',
+                title: 'Build',
+                text: "The Agent acts as a first-pass implementer within VS Code. It doesn't just write functions; it generates full feature slices—APIs, UI components, tests, and docs—simultaneously. Engineers supervise and review architectural patterns.",
+                visuals: [
+                    { type: 'box', text: 'VS Code', x: -210, y: 0 },
+                    { type: 'box', text: 'AI Agent', x: -70, y: 0, primary: true },
+                    // Stacked Outputs (Margins ensured)
+                    { type: 'box', text: 'Data Models', x: 130, y: -100 },
+                    { type: 'box', text: 'APIs', x: 130, y: -50 },
+                    { type: 'box', text: 'UI Components', x: 130, y: 0 },
+                    { type: 'box', text: 'Tests', x: 130, y: 50 },
+                    { type: 'box', text: 'Docs', x: 130, y: 100 },
+                    
+                    { type: 'line', from: 0, to: 1 },
+                    { type: 'line', from: 1, to: 2 },
+                    { type: 'line', from: 1, to: 3 },
+                    { type: 'line', from: 1, to: 4 },
+                    { type: 'line', from: 1, to: 5 },
+                    { type: 'line', from: 1, to: 6 }
+                ]
+            },
+            {
+                id: 'test',
+                tag: 'Phase 4',
+                title: 'Test',
+                text: "Testing becomes proactive. The Agent reads both source code and requirements (e.g., Jira) to understand intent. It generates comprehensive test suites, identifying edge cases humans might overlook.",
+                visuals: [
+                    { type: 'box', text: 'Jira Spec', x: -210, y: -50 },
+                    { type: 'box', text: 'Source Code', x: -210, y: 50 },
+                    { type: 'box', text: 'AI Agent', x: -40, y: 0, primary: true },
+                    { type: 'box', text: 'Test Suite', x: 140, y: 0 },
+                    { type: 'line', from: 0, to: 2 },
+                    { type: 'line', from: 1, to: 2 },
+                    { type: 'line', from: 2, to: 3 }
+                ]
+            },
+            {
+                id: 'review',
+                tag: 'Phase 5',
+                title: 'Review',
+                text: "AI reviewers go deeper than linters. They execute code to interpret runtime behavior and trace logic across files. This allows the agent to report bugs effectively, letting human reviewers focus on high-level architecture.",
+                visuals: [
+                    { type: 'box', text: 'GitHub PR', x: -220, y: 0 },
+                    { type: 'box', text: 'AI Agent', x: -90, y: 0, primary: true },
+                    // Parallel Processing
+                    { type: 'box', text: 'Execute Code', x: 60, y: -60 },
+                    { type: 'box', text: 'Runtime Check', x: 60, y: 0 },
+                    { type: 'box', text: 'Trace Logic', x: 60, y: 60 },
+                    // Result
+                    { type: 'box', text: 'Report Bugs', x: 210, y: 0, danger: true },
+
+                    { type: 'line', from: 0, to: 1 },
+                    { type: 'line', from: 1, to: 2 },
+                    { type: 'line', from: 1, to: 3 },
+                    { type: 'line', from: 1, to: 4 },
+                    { type: 'line', from: 2, to: 5 },
+                    { type: 'line', from: 3, to: 5 },
+                    { type: 'line', from: 4, to: 5 }
+                ]
+            },
+            {
+                id: 'document',
+                tag: 'Phase 6',
+                title: 'Document',
+                text: "Agents automate knowledge sharing. They analyze the codebase to generate architecture diagrams and read commit history to create accurate release summaries. Documentation becomes a byproduct of development, not a chore.",
+                visuals: [
+                    { type: 'box', text: 'Repository', x: -200, y: 0 },
+                    { type: 'box', text: 'AI Agent', x: -60, y: 0, primary: true },
+                    // Outputs (Fanned out to ensure margins)
+                    { type: 'box', text: 'Readme', x: 130, y: -70 },
+                    { type: 'box', text: 'Arch Diagram', x: 130, y: 0 },
+                    { type: 'box', text: 'Release Summary', x: 130, y: 70 },
+
+                    { type: 'line', from: 0, to: 1 },
+                    { type: 'line', from: 1, to: 2 },
+                    { type: 'line', from: 1, to: 3 },
+                    { type: 'line', from: 1, to: 4 }
+                ]
+            },
+            {
+                id: 'deploy',
+                tag: 'Phase 7',
+                title: 'Deploy & Maintain',
+                text: "Operational health is monitored via tools like Datadog. When an incident occurs, the Agent parses logs, links the error to a specific commit, and proposes a fix. This shifts reliability engineering from reactive firefighting to proactive resolution.",
+                visuals: [
+                    { type: 'box', text: 'Datadog Alert', x: -190, y: 0 },
+                    { type: 'box', text: 'AI Agent', x: -40, y: 0, primary: true },
+                    { type: 'box', text: 'Commit Link', x: 140, y: -40 },
+                    { type: 'box', text: 'Proposed Fix', x: 140, y: 40 },
+
+                    { type: 'line', from: 0, to: 1 },
+                    { type: 'line', from: 1, to: 2 },
+                    { type: 'line', from: 1, to: 3 }
+                ]
+            }
+        ];
+
+        let currentIndex = 0;
+        const contentEl = document.getElementById('slide-content');
+        const visualCanvas = document.getElementById('visual-canvas');
+        const progressBar = document.getElementById('progress-bar');
+        const nextBtn = document.getElementById('next-btn');
+        const nextIcon = document.getElementById('next-icon');
+
+        function renderSlide(index) {
+            const slide = slides[index];
+            
+            // 1. Update Narrative
+            contentEl.innerHTML = `
+                <div class="stage-tag fade-in" style="animation-delay: 0ms">${slide.tag}</div>
+                <h1 class="slide-title fade-in" style="animation-delay: 100ms">${slide.title}</h1>
+                <p class="slide-text fade-in" style="animation-delay: 200ms">${slide.text}</p>
+            `;
+
+            // 2. Update Progress (0% for first slide, 100% for last)
+            // Ensure strictly safe logic to prevent NaN if slides.length is somehow 1
+            const totalSteps = slides.length - 1;
+            const progress = totalSteps > 0 ? (index / totalSteps) * 100 : 100;
+            progressBar.style.width = `${progress}%`;
+
+            // 3. Update Button State (Start Over only on Phase 7)
+            if (index === slides.length - 1) {
+                // Change to "Start Over" icon (refresh arrow)
+                nextIcon.innerHTML = '<path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>';
+                nextBtn.title = "Start Over";
+            } else {
+                // Standard arrow
+                nextIcon.innerHTML = '<path d="M9 18l6-6-6-6"/></path>';
+                nextBtn.title = "Next";
+            }
+
+            // 4. Render Visuals
+            renderVisuals(slide.visuals);
+        }
+
+        function renderVisuals(visuals) {
+            visualCanvas.innerHTML = ''; 
+            const centerX = visualCanvas.clientWidth / 2;
+            const centerY = visualCanvas.clientHeight / 2;
+
+            // Render Lines
+            visuals.filter(v => v.type === 'line').forEach(line => {
+                const start = visuals[line.from];
+                const end = visuals[line.to];
+                
+                const lineEl = document.createElement('div');
+                lineEl.className = 'connection-line';
+                
+                const x1 = centerX + start.x;
+                const y1 = centerY + start.y;
+                const x2 = centerX + end.x;
+                const y2 = centerY + end.y;
+                
+                const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+
+                lineEl.style.width = `${length}px`;
+                lineEl.style.left = `${x1}px`;
+                lineEl.style.top = `${y1}px`;
+                lineEl.style.transform = `rotate(${angle}deg)`;
+                
+                visualCanvas.appendChild(lineEl);
+                gsap.to(lineEl, { opacity: 1, duration: 0.5, delay: 0.3 });
+            });
+
+            // Render Boxes
+            visuals.filter(v => v.type === 'box').forEach((box, i) => {
+                const el = document.createElement('div');
+                el.className = `tool-block ${box.primary ? 'primary' : ''} ${box.danger ? 'danger' : ''}`;
+                el.innerText = box.text;
+                
+                el.style.left = `${centerX + box.x}px`;
+                el.style.top = `${centerY + box.y}px`;
+                el.style.transform = 'translate(-50%, -50%)';
+
+                visualCanvas.appendChild(el);
+
+                gsap.fromTo(el, 
+                    { opacity: 0, scale: 0.8 }, 
+                    { opacity: 1, scale: 1, duration: 0.5, delay: i * 0.1, ease: "back.out(1.7)" }
+                );
+            });
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                renderSlide(currentIndex);
+            } else {
+                // Restart
+                currentIndex = 0;
+                renderSlide(currentIndex);
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderSlide(currentIndex);
+            }
+        }
+
+        window.onload = () => { renderSlide(0); };
+        window.onresize = () => { renderSlide(currentIndex); };
+
+    </script>
+</body>
+</html>

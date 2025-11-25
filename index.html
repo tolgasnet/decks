@@ -25,9 +25,49 @@
             color: var(--text-main);
             height: 100vh;
             display: flex;
+            flex-direction: column; /* Stack elements vertically */
             align-items: center;
             justify-content: center;
+            gap: 2rem; /* Spacing between header, slide, and footer */
             overflow: hidden;
+        }
+
+        /* Header Styling */
+        .page-header {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .page-header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+
+        /* Footer Styling */
+        .page-footer {
+            text-align: center;
+            z-index: 10;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .page-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .page-footer a:hover {
+            color: #60a5fa;
+            text-decoration: underline;
         }
 
         /* Main Container */
@@ -41,20 +81,20 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
+            flex-shrink: 0; /* Prevent shrinking on small screens */
         }
 
         /* Left Side: Narrative */
         .narrative-section {
             flex: 0 0 38%;
             padding: 3rem;
-            padding-bottom: 7rem; /* Increased padding to create gap for arrows */
+            padding-bottom: 6rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
             border-right: 1px solid var(--border);
             z-index: 2;
             background: var(--bg-card);
-            position: relative;
         }
 
         .stage-tag {
@@ -139,11 +179,11 @@
         /* Navigation Controls */
         .nav-controls {
             position: absolute;
-            bottom: 2rem; /* Kept low */
+            bottom: 2.5rem;
             left: 3rem;
             display: flex;
             gap: 1rem;
-            z-index: 20; /* High z-index */
+            z-index: 10;
         }
 
         .nav-btn {
@@ -180,7 +220,7 @@
             background: var(--primary);
             width: 0%;
             transition: width 0.5s ease;
-            z-index: 100; /* Ensure it is on TOP of everything, including the narrative panel */
+            z-index: 100;
         }
 
         /* Animation Classes */
@@ -196,6 +236,10 @@
     </style>
 </head>
 <body>
+
+    <header class="page-header">
+        <h1>Building an AI-native engineering team</h1>
+    </header>
 
     <div class="slide-container">
         <!-- Narrative Side -->
@@ -221,6 +265,17 @@
 
         <div class="progress-bar" id="progress-bar"></div>
     </div>
+
+    <footer class="page-footer">
+        <a href="https://developers.openai.com/codex/guides/build-ai-native-engineering-team/" target="_blank">
+            Read the original guide
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+        </a>
+    </footer>
 
     <script>
         const slides = [
@@ -370,7 +425,6 @@
             `;
 
             // 2. Update Progress (0% for first slide, 100% for last)
-            // Ensure strictly safe logic to prevent NaN if slides.length is somehow 1
             const totalSteps = slides.length - 1;
             const progress = totalSteps > 0 ? (index / totalSteps) * 100 : 100;
             progressBar.style.width = `${progress}%`;
